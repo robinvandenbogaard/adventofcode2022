@@ -5,10 +5,28 @@ public class Two implements DayProcessor
 
     private int sum;
 
+    enum Outcome { Lose(0), Draw(3), Win(6);
+
+        private final int score;
+
+        Outcome(int score) {
+            this.score = score;
+        }
+    }
+    enum DesiredOutcome {
+        X(Outcome.Lose), Y(Outcome.Draw), Z(Outcome.Win);
+
+        private final Outcome outcome;
+
+        DesiredOutcome(Outcome outcome) {
+            this.outcome = outcome;
+        }
+    }
+
     enum Encrypt {
-        A(Type.Stone), X(Type.Stone),
-        B(Type.Paper), Y(Type.Paper),
-        C(Type.Sciccor), Z(Type.Sciccor);
+        A(Type.Rock),
+        B(Type.Paper),
+        C(Type.Sciccor);
 
         private final Type type;
 
@@ -16,21 +34,10 @@ public class Two implements DayProcessor
             this.type = type;
         }
 
-        public int score() {
-            return type.score;
-        }
-
-        public boolean losesFrom(Encrypt yours) {
-            return yours.type.breaks(type);
-        }
-
-        public boolean isSameAs(Encrypt yours) {
-            return yours.type == this.type;
-        }
     }
 
     enum Type {
-        Stone(1), Paper(2), Sciccor(3);
+        Rock(1), Paper(2), Sciccor(3);
 
         private final int score;
 
@@ -38,11 +45,27 @@ public class Two implements DayProcessor
             this.score = score;
         }
 
-        public boolean breaks(Type type) {
+        public boolean losesFrom(Type type) {
             return switch (this) {
-                case Stone -> type == Sciccor;
-                case Paper -> type == Stone;
-                case Sciccor -> type == Paper;
+                case Rock -> type == Paper;
+                case Paper -> type == Sciccor;
+                case Sciccor -> type == Rock;
+            };
+        }
+
+        public Type losesTo() {
+            return switch (this) {
+                case Rock -> Paper;
+                case Paper -> Sciccor;
+                case Sciccor -> Rock;
+            };
+        }
+
+        public Type winsFrom() {
+            return switch (this) {
+                case Rock -> Sciccor;
+                case Paper -> Rock;
+                case Sciccor -> Paper;
             };
         }
     }
@@ -58,20 +81,29 @@ public class Two implements DayProcessor
         System.out.println(line + sum);
     }
 
-    private int calc(String line) {
+    int calc(String line) {
         var choices = line.split(" ");
-        var opponent = Encrypt.valueOf(choices[0]);
-        var yours = Encrypt.valueOf(choices[1]);
+        var opponent = Encrypt.valueOf(choices[0]).type;
+        var yours = getYours(opponent, DesiredOutcome.valueOf(choices[1]));
         var outcome = calc(opponent, yours);
-        return yours.score() + outcome;
+        System.out.printf("%s + %s => ", yours.score, outcome.score);
+        return yours.score + outcome.score;
     }
 
-    private int calc(Encrypt opponent, Encrypt yours) {
+    Type getYours(Type opponent, DesiredOutcome desired) {
+        return switch (desired.outcome) {
+            case Lose -> opponent.winsFrom();
+            case Draw -> opponent;
+            case Win -> opponent.losesTo();
+        };
+    }
+
+    Outcome calc(Type opponent, Type yours) {
         if (opponent.losesFrom(yours))
-            return 6;
-        else if (opponent.isSameAs(yours))
-            return 3;
-        return 0;
+            return Outcome.Win;
+        else if (opponent == yours)
+            return Outcome.Draw;
+        return Outcome.Lose;
     }
 
     @Override
