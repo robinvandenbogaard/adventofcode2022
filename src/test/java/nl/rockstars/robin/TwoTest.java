@@ -11,6 +11,6 @@ public class TwoTest
     @Test
     void step1() {
         var result = new Two().go("Two.txt").txt();
-        assertThat(result, is(""));
+        assertThat(result, is("15"));
     }
 }
