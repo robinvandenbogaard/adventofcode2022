@@ -1,6 +1,6 @@
 package nl.rockstars.robin;
 
-public class Two implements DayProcessor
+public class Day2 implements DayProcessor
 {
 
     private int sum;
@@ -72,7 +72,7 @@ public class Two implements DayProcessor
 
     public static void main(String[] args )
     {
-        new Two().go("Two.txt");
+        new Day2().go();
     }
 
     @Override

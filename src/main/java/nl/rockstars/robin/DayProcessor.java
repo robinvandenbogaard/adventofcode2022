@@ -6,7 +6,8 @@ import java.util.Scanner;
 
 public interface DayProcessor {
 
-    default Result go(String file) {
+    default Result go() {
+        var file = this.getClass().getSimpleName().substring(3)+".txt";
         try (var stream = Thread.currentThread().getContextClassLoader()
                 .getResourceAsStream(file)) {
             return go(stream);
@@ -24,7 +25,7 @@ public interface DayProcessor {
         }
         afterInput();
         var result = getResult();
-        System.out.println(result.txt());
+        System.out.println(result.output());
         return result;
     }
 

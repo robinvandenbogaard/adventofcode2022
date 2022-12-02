@@ -2,16 +2,16 @@ package nl.rockstars.robin;
 
 import org.junit.jupiter.api.Test;
 
-import static nl.rockstars.robin.Two.Type.*;
+import static nl.rockstars.robin.Day2.Type.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-public class TwoTest
+public class Day2Test
 {
 
     @Test
-    void step1() {
-        var result = new Two().go("Two.txt").txt();
+    void inputTest() {
+        var result = new Day2().go().output();
         assertThat(result, is("12"));
     }
 
