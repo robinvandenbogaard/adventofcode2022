@@ -1,9 +1,15 @@
 package nl.rockstars.robin;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class Day3 implements DayProcessor
 {
+    public static final String VALUES = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    private final List<Group> groups = new ArrayList<>();
+    private Group current = Group.EMPTY;
     private String priority = "";
 
     public static void main(String[] args )
@@ -14,7 +20,22 @@ public class Day3 implements DayProcessor
     @Override
     public void process(String line) {
         var rucksack = Rucksack.of(line);
-        priority += rucksack.getCommonLetter();
+        addToGroup(rucksack);
+    }
+
+    @Override
+    public void afterInput() {
+        for (var g : groups) {
+            priority += g.commonLetter();
+        }
+    }
+
+    private void addToGroup(Rucksack rucksack) {
+        current = current.add(rucksack);
+        if (current.isFull()) {
+            groups.add(current);
+            current = Group.EMPTY;
+        }
     }
 
     @Override
@@ -22,7 +43,6 @@ public class Day3 implements DayProcessor
         char[] xx = priority.toCharArray();
         int sum = 0;
         for (char x : xx) {
-            String VALUES = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
             sum += VALUES.indexOf(x)+1;
         }
 
@@ -30,36 +50,48 @@ public class Day3 implements DayProcessor
     }
 
 
-    record Rucksack(List<Compartment> compartments) {
-        final static int COMPARTMENTS = 2;
+    record Rucksack(String allItems) {
 
         public static Rucksack of(String line) {
-            var middle = line.length()/ COMPARTMENTS;
-            var compartment1 = line.substring(0,middle);
-            var compartment2 = line.substring(middle);
-            return new Rucksack(List.of(new Compartment(compartment1), new Compartment(compartment2)));
+            return new Rucksack(line);
         }
 
-        public String getCommonLetter() {
-            return compartments.stream().reduce(Compartment.BLANK, Compartment::findMatching).items;
+        public Set<String> uniqueItems() {
+            var result = new HashSet<String>();
+            for (char x : allItems.toCharArray()) {
+                result.add(String.valueOf(x));
+            }
+            return result;
+        }
+
+        public Rucksack retailAll(Rucksack rucksack) {
+            var retained = new HashSet<>(uniqueItems());
+            retained.retainAll(rucksack.uniqueItems());
+            return new Rucksack(String.join("", retained));
         }
     }
 
-    record Compartment(String items) {
-        static Compartment BLANK = new Compartment(null);
+    record Group(List<Rucksack> rucksacks) {
 
-        public Compartment findMatching(Compartment other) {
-            if (this == BLANK)
-                return other;
+        public static Group EMPTY = new Group(new ArrayList<>());
+        public static final int MAX = 3;
 
-            for (var character : other.items.toCharArray()) {
-                if (this.items.contains(String.valueOf(character)))
-                    return new Compartment(String.valueOf(character));
-            }
-
-            throw new IllegalStateException("No match found");
+        Group add(Rucksack rucksack) {
+            if (rucksacks.size()== MAX)
+                throw new IllegalStateException("to many rucksacks");
+            var newResults = new ArrayList<>(rucksacks);
+            newResults.add(rucksack);
+            return new Group(newResults);
         }
 
+        boolean isFull() {
+           return rucksacks.size() == MAX;
+        }
+
+        public String commonLetter() {
+
+            return rucksacks.stream().reduce(Rucksack.of(VALUES), Rucksack::retailAll).allItems;
+        }
     }
 
 }
