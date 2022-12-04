@@ -37,6 +37,6 @@ public class Day4 implements DayProcessor
     }
 
     boolean containsRange(Range<Integer> r1, Range<Integer> r2) {
-        return r1.containsRange(r2) || r2.containsRange(r1);
+        return r1.isOverlappedBy(r2);
     }
 }

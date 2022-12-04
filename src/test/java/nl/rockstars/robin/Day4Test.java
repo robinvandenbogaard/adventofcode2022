@@ -19,7 +19,7 @@ public class Day4Test {
     @Test
     void inputTest() {
         var result = day4.go().output();
-        assertThat(result, is("2"));
+        assertThat(result, is("4"));
     }
 
     @Test
@@ -40,7 +40,11 @@ public class Day4Test {
 
         var r3 = Range.between(7,9);
         var r4 = Range.between(6,7);
-        assertThat("One must fully contain the other", day4.containsRange(r3, r4), is(false));
+        assertThat("One does not fully contain the other", day4.containsRange(r3, r4), is(true));
+
+        var r5 = Range.between(1,2);
+        var r6 = Range.between(3,4);
+        assertThat(day4.containsRange(r5, r6), is(false));
     }
 
 }
