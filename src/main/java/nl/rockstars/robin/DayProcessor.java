@@ -9,13 +9,17 @@ import java.util.Scanner;
 public interface DayProcessor {
 
     default Result go() {
-        var file = this.getClass().getSimpleName().substring(3)+".txt";
+        var file = getFile();
         try (var stream = Thread.currentThread().getContextClassLoader()
                 .getResourceAsStream(file)) {
             return go(stream);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    default String getFile() {
+        return this.getClass().getSimpleName().substring(3)+".txt";
     }
 
     default Result go(InputStream file) {
