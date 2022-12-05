@@ -65,10 +65,12 @@ public class Day5 implements DayProcessor {
         Map<Integer, Stack<Crate>> stacks = new HashMap<>();
 
         public void execute(Instruction instruction) {
+            var crates = new ArrayList<Crate>();
             for (int crateNr = 0; crateNr < instruction.amount; crateNr++) {
-                var crate = stacks.get(instruction.from()).pop();
-                stacks.get(instruction.to()).push(crate);
+                crates.add(stacks.get(instruction.from()).pop());
             }
+            Collections.reverse(crates);
+            crates.forEach(crate->stacks.get(instruction.to()).push(crate));
         }
 
         public void addAll(List<Crate> crates) {

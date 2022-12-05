@@ -22,7 +22,7 @@ public class Day5Test {
     @Test
     void inputTest() {
         var result = day5.go().output();
-        assertThat(result, is("CMZ"));
+        assertThat(result, is("MCD"));
     }
 
     @Test
@@ -63,7 +63,6 @@ public class Day5Test {
         stack.addAll(List.of(new Crate(3, "A")));
         stack.execute(new Instruction(1, 2,1));
         assertThat(stack.getTops(), is("Z A"));
-
     }
 
 
