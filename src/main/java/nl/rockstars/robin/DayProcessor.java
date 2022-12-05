@@ -1,5 +1,7 @@
 package nl.rockstars.robin;
 
+import org.apache.commons.lang3.time.StopWatch;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Scanner;
@@ -17,15 +19,22 @@ public interface DayProcessor {
     }
 
     default Result go(InputStream file) {
+        StopWatch sw = new StopWatch();
+        sw.start();
         beforeInput();
+        sw.suspend();
         Scanner scanner = new Scanner(file);
 
         while (scanner.hasNext()) {
+            sw.resume();
             process(scanner.nextLine());
+            sw.suspend();
         }
+        sw.resume();
         afterInput();
         var result = getResult();
-        System.out.println(result.output());
+        sw.stop();
+        System.out.printf("%s: %s", sw.formatTime(), result.output());
         return result;
     }
 
