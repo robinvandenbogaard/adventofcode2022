@@ -36,9 +36,10 @@ public interface DayProcessor {
         }
         sw.resume();
         afterInput();
+
         var result = getResult();
         sw.stop();
-        System.out.printf("%s: %s", sw.formatTime(), result.output());
+        System.out.printf("%s: %s%n", sw.formatTime(), result.output());
         return result;
     }
 
