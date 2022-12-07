@@ -20,7 +20,7 @@ public class Day7Test {
     @Test
     void inputTest() {
         var result = day7.go().output();
-        assertThat(result, is("95437"));
+        assertThat(result, is("24933642"));
     }
 
     @Test

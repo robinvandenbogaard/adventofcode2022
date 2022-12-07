@@ -4,6 +4,10 @@ import java.util.*;
 
 public class Day7 implements DayProcessor {
 
+    private static final long available = 70000000L;
+
+    private static final long needed = 30000000L;
+
     private final Dir root;
     private Dir currentDir;
 
@@ -38,14 +42,8 @@ public class Day7 implements DayProcessor {
 
     @Override
     public Result getResult() {
-        var x = root.subdirs().stream().sorted(Comparator.comparing(Dir::size)).toList();
-
-        long sum = 0;
-        for (var d : x) {
-            long size = d.size();
-            if (d.size() < 100000)
-                sum+=size;
-        }
+        var required = Math.max(0, needed - (available - root.size()));
+        var sum = root.subdirs().stream().mapToLong(Dir::size).filter(i -> i >= required).min().orElse(0L);
         return new Result((int) sum);
     }
 
