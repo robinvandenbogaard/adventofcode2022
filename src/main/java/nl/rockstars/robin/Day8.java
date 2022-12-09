@@ -1,13 +1,16 @@
 package nl.rockstars.robin;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
 
 public class Day8 implements DayProcessor {
 
     Integer[][] grid;
     int size;
     private int currrow;
-    private int total;
+    private int scenicScore;
 
     public static void main(String[] args) {
         new Day8().go();
@@ -28,62 +31,72 @@ public class Day8 implements DayProcessor {
 
     @Override
     public void afterInput() {
-        total += getEdgeTreeCount(size);
-        total += visibleInnerTrees(grid, size);
-    }
-
-    int getEdgeTreeCount(int size) {
-        return (size * 4) - 4;
-    }
-
-    int visibleInnerTrees(Integer[][] grid, int size) {
-        var result = 0;
-        for (int x = 1; x < size - 1; x++) {
-            for (int y = 1; y < size - 1; y++) {
-                result += Math.min(1,testH(x, y, grid, size)+testV(x, y, grid, size));
+        List<Integer> scores = new ArrayList<>();
+        for (int x = 0; x < size; x++) {
+            for (int y = 0; y < size; y++) {
+                scores.add(viewCount(x, y, grid, size));
             }
         }
-        return result;
+        scenicScore = scores.stream().max(Comparator.naturalOrder()).orElseThrow();
+
     }
 
-    int testH(int x, int y, Integer[][] grid, int size) {
-        if (x == size-1 || y == size-1 || x <= 0 || y <= 0)
-            throw new IllegalStateException("do not check edges");
-
-        var height = grid[x][y];
-        var blockedLeft = false;
-        var blockedRight = false;
-        for (int i = 0; i < size && (!blockedLeft || !blockedRight); i++) {
-            if (x == i)
-                continue;
-            if (i < x)
-                blockedLeft = grid[i][y] >= height || blockedLeft;
-            if (i > x)
-                blockedRight = grid[i][y] >= height || blockedRight;
+    public int viewCount(int x, int y, Integer[][] grid, int size) {
+        int up=1, left=1, right=1, down=1;
+        for (int i = 0; i < size; i++) {
+            var p = new Point(x, y);
+            up = sees(Direction.up, p, grid, size);
+            left = sees(Direction.left, p, grid, size);
+            right = sees(Direction.right, p, grid, size);
+            down = sees(Direction.down, p, grid, size);
         }
-        return blockedLeft && blockedRight ? 0 : 1;
+
+        return up * left * right * down;
     }
 
-    int testV(int x, int y, Integer[][] grid, int size) {
-        if (x == size-1 || y == size-1 || x <= 0 || y <= 0)
-            throw new IllegalStateException("do not check edges");
+    int sees(Direction d, Point p, Integer[][] grid, int size) {
+        var seen = 0;
+        for (int i = 1; i < size; i++) {
 
-        var height = grid[x][y];
-        var blockedLeft = false;
-        var blockedRight = false;
-        for (int i = 0; i < size && (!blockedLeft || !blockedRight); i++) {
-            if (y == i)
-                continue;
-            if (i < y)
-                blockedLeft = grid[x][i] >= height || blockedLeft;
-            if (i > y)
-                blockedRight = grid[x][i] >= height || blockedRight;
+            var targetTree = p.add(d.multiply(i));
+            if (!targetTree.inBounds(size) && !p.equals(targetTree))
+                break;
+
+            int height = grid[targetTree.x][targetTree.y];
+            if (height >= grid[p.x][p.y]) {
+                if (!p.equals(targetTree))
+                    seen++;
+                break;
+            }
+            seen++;
         }
-        return blockedLeft && blockedRight ? 0 : 1;
+        return seen;
     }
 
     @Override
     public Result getResult() {
-        return new Result(total);
+        return new Result(scenicScore);
+    }
+
+    record Point(int x, int y) {
+
+        public Point add(Direction d) {
+            return new Point(x+d.x, y+d.y);
+        }
+
+        public boolean inBounds(int size) {
+            return x>=0 && y>=0 && x<size && y<size;
+        }
+    }
+
+    record Direction(int x, int y) {
+        static Direction up = new Direction(0,-1);
+        static Direction down = new Direction(0,1);
+        static Direction left = new Direction(-1,0);
+        static Direction right = new Direction(1,0);
+
+        public Direction multiply(int multiplier) {
+            return new Direction(x*multiplier, y*multiplier);
+        }
     }
 }
