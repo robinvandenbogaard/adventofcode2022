@@ -1,5 +1,7 @@
 package nl.rockstars.robin;
 
+
+import java.util.Arrays;
 import java.util.List;
 
 public class Day10 implements DayProcessor {
@@ -7,6 +9,7 @@ public class Day10 implements DayProcessor {
     Register register;
     Cycle cycle;
     int sum = 0;
+    private Crt crt;
 
     public static void main(String[] args) {
         new Day10().go();
@@ -22,6 +25,7 @@ public class Day10 implements DayProcessor {
     public void beforeInput() {
         register = new Register(1);
         cycle = new Cycle(0, register);
+        crt = new Crt();
     }
 
     @Override
@@ -36,6 +40,7 @@ public class Day10 implements DayProcessor {
 
     private void setCycle(Cycle cycle) {
         this.cycle = cycle;
+        crt.draw(cycle);
         this.sum+=cycle.signalStrength();
     }
 
@@ -45,7 +50,11 @@ public class Day10 implements DayProcessor {
 
     @Override
     public Result getResult() {
-        return new Result(sum);
+        return new Result("\n"+format(crt.row()));
+    }
+
+    private String format(String row) {
+        return String.join("\n", Arrays.asList(row.split("(?<=\\G.{40})")));
     }
 
     record Register(int value) {
@@ -54,21 +63,47 @@ public class Day10 implements DayProcessor {
         }
     }
 
-    record Cycle(int value, Register register, int valueToAddOnNextCycle) {
+    record Cycle(int number, Register register, int valueToAddOnNextCycle) {
         public Cycle(int value, Register register) {
             this(value, register, 0);
         }
 
         public Cycle next() {
-            return new Cycle(value+1, register.add(valueToAddOnNextCycle), 0);
+            return new Cycle(number +1, register.add(valueToAddOnNextCycle), 0);
         }
 
         public Cycle next(int valueForNext) {
-            return new Cycle(value+1, register.add(this.valueToAddOnNextCycle), valueForNext);
+            return new Cycle(number +1, register.add(this.valueToAddOnNextCycle), valueForNext);
         }
 
         public int signalStrength() {
-            return value % 40 == 20 ? value * register.value() : 0;
+            return number % 40 == 20 ? number * register.value() : 0;
+        }
+    }
+
+    static class Crt {
+
+        private int position = 0;
+        private String row = "";
+
+        public int spritePosition() {
+            return position;
+        }
+
+        public String draw(Cycle cycle) {
+            position = cycle.register.value;
+            var pixel = "";
+            int pixelIndexToDraw = (cycle.number-1)%40;
+            if (pixelIndexToDraw >= position-1 && pixelIndexToDraw <= position+1)
+                 pixel = "#";
+            else
+                pixel = ".";
+            row+=pixel;
+            return pixel;
+        }
+
+        public String row() {
+            return row;
         }
     }
 }

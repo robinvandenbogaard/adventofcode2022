@@ -20,7 +20,14 @@ public class Day10Test {
     @Test
     void inputTest() {
         var result = day10.go().output();
-        assertThat(result, is("13140"));
+        assertThat(result, is("""
+
+                ##..##..##..##..##..##..##..##..##..##..
+                ###...###...###...###...###...###...###.
+                ####....####....####....####....####....
+                #####.....#####.....#####.....#####.....
+                ######......######......######......####
+                #######.......#######.......#######....."""));
     }
 
     @Test
@@ -113,5 +120,31 @@ public class Day10Test {
         assertThat(new Cycle(140, new Register(21)).signalStrength(), is(2940));
         assertThat(new Cycle(180, new Register(16)).signalStrength(), is(2880));
         assertThat(new Cycle(220, new Register(18)).signalStrength(), is(3960));
+    }
+
+    @Test
+    void crtSpritePositionIsZero() {
+        var crt = new Crt();
+        assertThat(crt.spritePosition(), is(0));
+    }
+
+    @Test
+    void updatesPositionToRegisterFromCycle() {
+        var crt = new Crt();
+        crt.draw(new Cycle(23, new Register(12)));
+        assertThat(crt.spritePosition(), is(12));
+
+        crt.draw(new Cycle(23, new Register(16)));
+        assertThat(crt.spritePosition(), is(16));
+    }
+
+    @Test
+    void drawsAPixelIfRegisterIsNearPosition() {
+        var crt = new Crt();
+        assertThat(crt.draw(new Cycle(1, new Register(2))), is("."));
+        assertThat(crt.draw(new Cycle(2, new Register(2))), is("#"));
+        assertThat(crt.draw(new Cycle(3, new Register(2))), is("#"));
+        assertThat(crt.draw(new Cycle(4, new Register(2))), is("#"));
+        assertThat(crt.draw(new Cycle(5, new Register(2))), is("."));
     }
 }
