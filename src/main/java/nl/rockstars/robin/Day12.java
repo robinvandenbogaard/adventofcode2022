@@ -1,10 +1,14 @@
 package nl.rockstars.robin;
 
 import org.jgrapht.Graph;
+import org.jgrapht.GraphPath;
 import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 public class Day12 implements DayProcessor {
@@ -15,13 +19,14 @@ public class Day12 implements DayProcessor {
     private final int columns;
     private final int rows;
 
-    private Point start;
+    private final List<Point> starts;
     private Point end;
 
     public Day12(int columns, int rows) {
         this.columns = columns;
         this.rows = rows;
         this.matrix= new Point[rows][columns];
+        this.starts = new ArrayList<>();
     }
 
     public static void main(String[] args) {
@@ -42,8 +47,8 @@ public class Day12 implements DayProcessor {
         for (int column = 0; column < columns; column++) {
             var c = split[column];
             Point p;
-            if (c == 'S') {
-                start = p = new Point(parsingRow, column, 'a');
+            if (c == 'S' || c == 'a') {
+                starts.add(p = new Point(parsingRow, column, 'a'));
             }
             else if ( c == 'E') {
                 end = p = new Point(parsingRow, column, 'z');
@@ -102,8 +107,15 @@ public class Day12 implements DayProcessor {
     @Override
     public Result getResult() {
         var dijkstraAlg = new DijkstraShortestPath<>(graph);
-        var cPaths = dijkstraAlg.getPaths(start);
-        return new Result(cPaths.getPath(end).getLength());
+        int minLength = starts.stream()
+                .map(dijkstraAlg::getPaths)
+                .filter(Objects::nonNull)
+                .map(paths->paths.getPath(end))
+                .filter(Objects::nonNull)
+                .mapToInt(GraphPath::getLength)
+                .min()
+                .orElseThrow();
+        return new Result(minLength);
     }
 
     private record Point(int row, int column, int value) {

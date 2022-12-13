@@ -18,6 +18,6 @@ class Day12Test {
     @Test
     void getResult() {
         var result = day.go().output();
-        assertThat(result, is("31"));
+        assertThat(result, is("29"));
     }
 }
