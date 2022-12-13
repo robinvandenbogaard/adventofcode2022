@@ -8,16 +8,16 @@ import static org.hamcrest.Matchers.is;
 
 class Day12Test {
 
-    private Day12 day = new Day12();
+    private Day12 day;
 
     @BeforeEach
     void setUp() {
-        day = new Day12();
+        day = new Day12(8,5);
     }
 
     @Test
     void getResult() {
         var result = day.go().output();
-        assertThat(result, is(""));
+        assertThat(result, is("31"));
     }
 }
