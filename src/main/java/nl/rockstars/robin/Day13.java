@@ -10,62 +10,33 @@ import java.util.Objects;
 
 public class Day13 implements DayProcessor {
 
-    List<Pair<?>> pairs = new ArrayList<>();
-
-    PacketData p1, p2;
+    List<PacketData> packets = new ArrayList<>();
 
     public static void main(String[] args) {
         new Day13().go();
     }
 
-
     @Override
     public void process(String line) {
         if (Objects.equals(line, "")) {
-            addPair();
             return;
         }
 
-        if (p1 == null)
-            p1 = PacketData.of(line);
-        else if (p2 == null)
-            p2 = PacketData.of(line);
-    }
-
-    private void addPair() {
-        pairs.add(Pair.of(pairs.size()+1, p1, p2));
-        p1 = p2 = null;
-    }
-
-    @Override
-    public void afterInput() {
-        addPair(); //last one
+        packets.add(PacketData.of(line));
     }
 
     @Override
     public Result getResult() {
-        return new Result(pairs.stream().filter(Pair::inOrder).mapToInt(Pair::index).sum());
-    }
-
-    record Pair<T extends Comparable<T>> (int index, T left, T right) {
-
-        public static <T extends Comparable<T>> Pair<T>  of(int index, T p1, T  p2) {
-            return new Pair<>(index, p1, p2);
-        }
-
-        public boolean inOrder() {
-            System.out.printf("== Pair %d ==%n", index);
-            var inOrder =  left.compareTo(right) < 0;
-            if (inOrder) {
-                System.out.printf("     Left side is smaller, so inputs are in the right order%n");
-            } else {
-                System.out.printf("     Right side is smaller, so inputs are in the wrong order%n");
-            }
-            return inOrder;
-        }
+        packets.add(PacketData.SIGNAL1);
+        packets.add(PacketData.SIGNAL2);
+        var list = packets.stream().sorted(PacketData::compareTo).toList();
+        list.forEach(System.out::println);
+        return new Result((1+list.indexOf(PacketData.SIGNAL1)) * (1+list.indexOf(PacketData.SIGNAL2)));
     }
 
     public static final class PacketData implements Comparable<PacketData> {
+        public static final PacketData SIGNAL1 = PacketData.of("[[2]]");
+        public static final PacketData SIGNAL2 = PacketData.of("[[6]]");
         private final List<Value> values;
 
         public PacketData(List<Value> values) {

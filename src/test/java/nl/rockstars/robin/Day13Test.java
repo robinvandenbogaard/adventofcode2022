@@ -1,7 +1,6 @@
 package nl.rockstars.robin;
 
 import nl.rockstars.robin.Day13.PacketData;
-import nl.rockstars.robin.Day13.Pair;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -23,14 +22,7 @@ class Day13Test {
     @Test
     void getResult() {
         var result = day.go().output();
-        assertThat(result, is("13"));
-    }
-
-    @Test
-    void pairOrder() {
-        assertThat(new Pair<>(0, 1, 2).inOrder(), is(true));
-        assertThat(new Pair<>(0, 1, 1).inOrder(), is(false));
-        assertThat(new Pair<>(0, 2, 1).inOrder(), is(false));
+        assertThat(result, is("140"));
     }
 
     @Test
