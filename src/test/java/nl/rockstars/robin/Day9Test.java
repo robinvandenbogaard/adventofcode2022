@@ -25,15 +25,6 @@ public class Day9Test {
     }
 
     @Test
-    void movePoint() {
-        Point start = Point.of(0,0);
-        assertThat(start.move(Direction.up), is(Point.of(0,-1)));
-        assertThat(start.move(Direction.down), is(Point.of(0,1)));
-        assertThat(start.move(Direction.left), is(Point.of(-1,0)));
-        assertThat(start.move(Direction.right), is(Point.of(1,0)));
-    }
-
-    @Test
     void noNeedToFollowIfOnSameSpot() {
         Point expected = Point.of(0,0);
         assertThat(tail().follow(head()), is(expected));

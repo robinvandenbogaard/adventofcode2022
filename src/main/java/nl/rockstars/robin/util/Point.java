@@ -84,4 +84,8 @@ public final class Point {
                 "x=" + x + ", " +
                 "y=" + y + ']';
     }
+
+    public int manhattanDistance(Point other) {
+        return Math.abs(x-other.x)+Math.abs(y-other.y);
+    }
 }
