@@ -1,7 +1,9 @@
 package nl.rockstars.robin;
 
+import nl.rockstars.robin.util.Direction;
+import nl.rockstars.robin.util.Point;
+
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 
 public class Day9 implements DayProcessor {
@@ -57,7 +59,7 @@ public class Day9 implements DayProcessor {
         }
 
         public String partOn(Point point) {
-            if (head.location.add(DRAWOFFSET).equals(point))
+            if (head.location.move(DRAWOFFSET).equals(point))
                 return "H";
             else
                 return head.partOn(point);
@@ -98,7 +100,7 @@ public class Day9 implements DayProcessor {
         }
 
         public String partOn(Point point) {
-            if (location.add(DRAWOFFSET).equals(point))
+            if (location.move(DRAWOFFSET).equals(point))
                 return next != null ? "#" : "T";
             else if (next != null)
                 return next.partOn(point);
@@ -165,91 +167,6 @@ public class Day9 implements DayProcessor {
             location = location.move(d);
 
             letNextFollow();
-        }
-    }
-
-    static class Point {
-        public static Point start = Point.of(0, 0);
-        private final int x;
-        private final int y;
-
-        Point(int x, int y) {
-            this.x = x;
-            this.y = y;
-        }
-
-        public static Point of(int x, int y) {
-            return new Point(x, y);
-        }
-
-        public Point move(Direction d) {
-            return new Point(x + d.x, y + d.y);
-        }
-
-        protected boolean lte(Point other) {
-            return this.x <= other.x && this.y <= other.x;
-        }
-
-        protected Point distance(Point target) {
-            return Point.of(Math.abs(this.x - target.x), Math.abs(this.y - target.y));
-        }
-
-        public Point up() {
-            return move(Direction.up);
-        }
-
-        public Point down() {
-            return move(Direction.down);
-        }
-
-        public Point right() {
-            return move(Direction.right);
-        }
-
-        public Point left() {
-            return move(Direction.left);
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (obj == this) return true;
-            if (obj == null || obj.getClass() != this.getClass()) return false;
-            var that = (Point) obj;
-            return this.x == that.x &&
-                    this.y == that.y;
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(x, y);
-        }
-
-        @Override
-        public String toString() {
-            return "Point[" +
-                    "x=" + x + ", " +
-                    "y=" + y + ']';
-        }
-
-        public Point add(Point other) {
-            return Point.of(x+other.x, y+other.y);
-        }
-    }
-
-    record Direction(int x, int y) {
-        static Direction up = new Direction(0, -1);
-        static Direction down = new Direction(0, 1);
-        static Direction left = new Direction(-1, 0);
-        static Direction right = new Direction(1, 0);
-
-        public static Direction of(String key) {
-            return switch (key) {
-                case "U" -> up;
-                case "D" -> down;
-                case "R" -> right;
-                case "L" -> left;
-                default -> throw new IllegalArgumentException(key);
-            };
         }
     }
 

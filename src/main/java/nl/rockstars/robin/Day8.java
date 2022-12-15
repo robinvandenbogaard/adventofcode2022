@@ -1,5 +1,8 @@
 package nl.rockstars.robin;
 
+import nl.rockstars.robin.util.Direction;
+import nl.rockstars.robin.util.Point;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -44,7 +47,7 @@ public class Day8 implements DayProcessor {
     public int viewCount(int x, int y, Integer[][] grid, int size) {
         int up=1, left=1, right=1, down=1;
         for (int i = 0; i < size; i++) {
-            var p = new Point(x, y);
+            var p = Point.of(x, y);
             up = sees(Direction.up, p, grid, size);
             left = sees(Direction.left, p, grid, size);
             right = sees(Direction.right, p, grid, size);
@@ -58,12 +61,12 @@ public class Day8 implements DayProcessor {
         var seen = 0;
         for (int i = 1; i < size; i++) {
 
-            var targetTree = p.add(d.multiply(i));
+            var targetTree = p.move(d.multiply(i));
             if (!targetTree.inBounds(size) && !p.equals(targetTree))
                 break;
 
-            int height = grid[targetTree.x][targetTree.y];
-            if (height >= grid[p.x][p.y]) {
+            int height = grid[targetTree.x()][targetTree.y()];
+            if (height >= grid[p.x()][p.y()]) {
                 if (!p.equals(targetTree))
                     seen++;
                 break;
@@ -76,27 +79,5 @@ public class Day8 implements DayProcessor {
     @Override
     public Result getResult() {
         return new Result(scenicScore);
-    }
-
-    record Point(int x, int y) {
-
-        public Point add(Direction d) {
-            return new Point(x+d.x, y+d.y);
-        }
-
-        public boolean inBounds(int size) {
-            return x>=0 && y>=0 && x<size && y<size;
-        }
-    }
-
-    record Direction(int x, int y) {
-        static Direction up = new Direction(0,-1);
-        static Direction down = new Direction(0,1);
-        static Direction left = new Direction(-1,0);
-        static Direction right = new Direction(1,0);
-
-        public Direction multiply(int multiplier) {
-            return new Direction(x*multiplier, y*multiplier);
-        }
     }
 }

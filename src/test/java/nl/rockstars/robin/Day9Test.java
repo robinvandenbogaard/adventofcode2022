@@ -1,5 +1,7 @@
 package nl.rockstars.robin;
 
+import nl.rockstars.robin.util.Direction;
+import nl.rockstars.robin.util.Point;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

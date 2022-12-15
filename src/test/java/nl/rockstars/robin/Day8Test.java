@@ -1,10 +1,10 @@
 package nl.rockstars.robin;
 
+import nl.rockstars.robin.util.Direction;
+import nl.rockstars.robin.util.Point;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static nl.rockstars.robin.Day8.Direction;
-import static nl.rockstars.robin.Day8.Point;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
@@ -50,10 +50,10 @@ public class Day8Test {
 
     @Test
     void seesUp() {
-        var top = day8.sees(Direction.up, new Point(1, 0), toGrid("111 111 111", 3),3);
-        var center = day8.sees(Direction.up, new Point(1, 1), toGrid("101 111 111", 3),3);
-        var bottom = day8.sees(Direction.up, new Point(1, 2), toGrid("101 101 111", 3),3);
-        var partial = day8.sees(Direction.up, new Point(1, 1), toGrid("121 101 111", 3),3);
+        var top = day8.sees(Direction.up, Point.of(1, 0), toGrid("111 111 111", 3),3);
+        var center = day8.sees(Direction.up, Point.of(1, 1), toGrid("101 111 111", 3),3);
+        var bottom = day8.sees(Direction.up, Point.of(1, 2), toGrid("101 101 111", 3),3);
+        var partial = day8.sees(Direction.up, Point.of(1, 1), toGrid("121 101 111", 3),3);
         assertThat(top, is(0));
         assertThat(center, is(1));
         assertThat(bottom, is(2));
