@@ -1,6 +1,6 @@
 package nl.rockstars.robin;
 
-import org.apache.commons.lang3.Range;
+import nl.rockstars.robin.util.Range;
 
 import java.util.Arrays;
 
@@ -29,14 +29,14 @@ public class Day4 implements DayProcessor
         return new Result(sum);
     }
 
-    Range<Integer> toRange(String input) {
+    Range toRange(String input) {
         var numbers = input.split("-");
-        var start = Integer.valueOf(numbers[0]);
-        var end = Integer.valueOf(numbers[1]);
+        var start = Integer.parseInt(numbers[0]);
+        var end = Integer.parseInt(numbers[1]);
         return Range.between(start, end);
     }
 
-    boolean containsRange(Range<Integer> r1, Range<Integer> r2) {
+    boolean containsRange(Range r1, Range r2) {
         return r1.isOverlappedBy(r2);
     }
 }

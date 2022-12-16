@@ -1,6 +1,6 @@
 package nl.rockstars.robin;
 
-import org.apache.commons.lang3.Range;
+import nl.rockstars.robin.util.Range;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
