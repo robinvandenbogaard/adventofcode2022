@@ -16,6 +16,14 @@ public final class Point {
         return new Point(x, y);
     }
 
+    /**
+     * accepts "0,0"
+     */
+    public static Point of(String input) {
+        var numbers = input.split(",");
+        return new Point(Integer.parseInt(numbers[0]), Integer.parseInt(numbers[1]));
+    }
+
     public Point move(Direction d) {
         return new Point(x + d.x(), y + d.y());
     }
