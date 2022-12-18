@@ -9,7 +9,7 @@ public class Day14 implements DayProcessor {
 
     List<Wall> walls = new ArrayList<>();
 
-    int maxY = 0, maxX = 0, minX = 800;
+    int maxY = 0, maxX = 1000, minX = 0;
     private World world;
 
     public static void main(String[] args) {
@@ -34,7 +34,10 @@ public class Day14 implements DayProcessor {
 
     @Override
     public void afterInput() {
-        world = World.of(minX, maxX, maxY);
+
+        walls.add(Wall.of("0,"+(maxY+2), "1000,"+(maxY+2)));
+
+        world = World.of(minX, maxX, maxY+2);
         world.addWalls(walls);
     }
 
@@ -45,6 +48,7 @@ public class Day14 implements DayProcessor {
             settled++;
             //world.print();
         }
+        settled++; //the last sand at the spawn
         return new Result(settled);
     }
 
@@ -79,10 +83,6 @@ public class Day14 implements DayProcessor {
             return new Sand(location);
         }
 
-        public boolean inAbyss(int height) {
-            return location.y() == height;
-        }
-
         public int x() {
             return location.x();
         }
@@ -113,7 +113,7 @@ public class Day14 implements DayProcessor {
         }
 
         public static World of(int minX, int maxX, int maxY) {
-            return new World((maxX - minX) + 4, maxY + 4, minX-2);
+            return new World((maxX - minX) + 4, maxY + 3, minX-2);
         }
 
         public void addWalls(List<Wall> walls) {
@@ -128,11 +128,16 @@ public class Day14 implements DayProcessor {
 
         private boolean addSettledSand() {
             Sand sand = Sand.of(Point.of(spawn.x(), spawn.y()));
+            if (getFreeSpot(spawn) == null) {
+                world[sand.x()][sand.y()] = 2;
+                return false;
+            }
+
             while (sand.fallFurther(this)) {
                 //continue falling;
             }
             world[sand.x()][sand.y()] = 2;
-            return !sand.inAbyss(world[0].length-1);
+            return true;
         }
 
         public Point getFreeSpot(Point location) {
